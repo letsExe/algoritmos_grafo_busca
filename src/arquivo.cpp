@@ -126,7 +126,7 @@ class arquivo{
         }
 
 
-        bool ler_arquivo(string arquivo_entrada, grafo &grafo, arquivo &config, aresta &aresta){
+        bool ler_arquivo(string arquivo_entrada, grafo &grafo, arquivo &config, aresta &aresta, heuristica& h){
             string linha, sub_string, inicio_aresta, fim_aresta;
             int pos_ini, pos_final, peso; // Índices de início e fim para extrair substrings.
 
@@ -146,24 +146,18 @@ class arquivo{
                     pos_ini = linha.find("ponto_inicial(") + 14;
                     pos_final = linha.find(")");
                     sub_string = linha.substr(pos_ini, pos_final - pos_ini);
-                    config.set_ponto_inical(sub_string);
-                    
-                    cout << config.get_ponto_inical() << endl;
+                    config.set_ponto_inical(sub_string); //cout << config.get_ponto_inical() << endl;
                 } 
 
                 if(linha.find("ponto_final(") != -1){
                     pos_ini = linha.find("ponto_final(") + 12;
                     pos_final = linha.find(")");
                     sub_string = linha.substr(pos_ini, pos_final - pos_ini);
-                    config.set_ponto_final(sub_string);
-                                      
-                    cout << config.get_ponto_final() << endl;
+                    config.set_ponto_final(sub_string); //cout << config.get_ponto_final() << endl;
                 } 
 
                 else if (linha.find("orientado") != -1) {
-                    grafo.set_orientado(linha.find("s") != -1);
-
-                    cout << grafo.get_orientado() << endl;
+                    grafo.set_orientado(linha.find("s") != -1); //cout << grafo.get_orientado() << endl;
                 }
 
                 else if(linha.find("pode_ir(") != -1){
@@ -186,7 +180,29 @@ class arquivo{
                     aresta.set_custo(stoi(sub_string)); //cout << aresta.get_custo() << endl;
 
                     grafo.add_aresta(aresta.get_lig_inicio(), aresta.get_lig_fim(), aresta.get_custo());  
-                    cout << aresta.get_lig_inicio() << " -> " << aresta.get_lig_fim() << " -> " << aresta.get_custo() << endl;
+                    //cout << aresta.get_lig_inicio() << " -> " << aresta.get_lig_fim() << " -> " << aresta.get_custo() << endl;
+                }
+
+                else if(linha.find("h(") != -1){
+                    pos_ini = linha.find("h(") + 2;
+                    pos_final = linha.find(",");
+                    sub_string = linha.substr(pos_ini, pos_final - pos_ini);
+                    //inicio_aresta = sub_string; cout << inicio_aresta << endl;
+                    h.set_h_inicio(sub_string); //cout << h.get_h_inicio() << endl;
+
+                    pos_ini = pos_final + 1; //cout << pos_ini << endl << pos_final << endl;
+                    pos_final = pos_ini + 2; 
+                    sub_string = linha.substr(pos_ini, pos_final - pos_ini);
+                    //fim_h = sub_string; cout << fim_h << endl;
+                    h.set_h_fim(sub_string); //cout << h.get_h_fim() << endl;
+
+                    pos_ini = pos_final + 1; //cout << pos_ini << endl << pos_final << endl;
+                    pos_final = linha.find(")"); 
+                    sub_string = linha.substr(pos_ini, pos_final - pos_ini);
+                    //string pesos = sub_string; cout << pesos << endl;
+                    h.set_h_heuristica(stoi(sub_string)); //cout << h.get_h_heuristica() << endl;
+
+                    cout << h.get_h_inicio() << " -> " << h.get_h_fim() << " -> " << h.get_h_heuristica() << endl;
                 }
             }
 
@@ -203,9 +219,10 @@ int main(){
     vector<aresta> vazio;
     grafo g(false, vazio);
     aresta a("", "", 0);
+    heuristica h("", "", 0);
 
     // chama o metodo ler_arquivo
-    if (!arq.ler_arquivo("teste.txt", g, arq, a)) {
+    if (!arq.ler_arquivo("teste.txt", g, arq, a, h)) {
         cerr << "Falha na leitura do arquivo";
         return 1;
     }
