@@ -85,6 +85,8 @@ bool Arquivo::ler_arquivo(string arquivo_entrada, Grafo &grafo, Arquivo &config,
             pos_final = linha.find(")"); 
             sub_string = linha.substr(pos_ini, pos_final - pos_ini);
             h.set_h_heuristica(stoi(sub_string)); //cout << h.get_h_heuristica() << endl;
+
+            grafo.add_heuristica(h.get_h_inicio(), h.get_h_fim(), h.get_h_heuristica());
             //cout << h.get_h_inicio() << " -> " << h.get_h_fim() << " -> " << h.get_h_heuristica() << endl;
         }
     }

@@ -1,8 +1,8 @@
 #ifndef A_ESTRELA_H
-#define AESTRELA_H
+#define A_ESTRELA_H
 
-#include "../header/arquivo.h"
-#include "../header/grafo.h"
+#include "arquivo.h"
+#include "grafo.h"
 
 #include <map>
 #include <queue>
@@ -21,16 +21,22 @@ class No {
 
     public:
         No(string nome, string pai, int g, int h);
+        
+        // Sobrecarga do operador > para uso com a fila de prioridade
+        bool operator>(const No &outro) const;
 
-        bool operator>(const No &outro);
-
-        // Declaração da função do algoritmo A*
-        void a_estrela(Grafo& grafo, string inicio, string fim);
+        // Funções auxiliares para obter os valores
+        string get_nome() const { return nome; }
+        string get_pai() const { return pai; }
+        int get_g() const { return g; }
+        int get_h() const { return h; }
+        int get_f() const { return f; }
 
         // Função auxiliar para obter o valor da heurística para um nó específico
-        int get_heuristica_para_no(Grafo &grafo, string &nome_no);
+        int get_heuristica_para_no(Grafo &grafo, string nome_no);
 
+        // Declaração da função do algoritmo A*
+        void algoritmo_a_estrela(Grafo& grafo, string inicio, string fim);
 };
-
 
 #endif

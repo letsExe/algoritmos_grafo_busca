@@ -52,6 +52,7 @@ Grafo::Grafo(bool orientado, vector<Aresta> aresta){
 // Getters
 bool Grafo::get_orientado(){ return this->orientado; }
 vector<Aresta> Grafo::get_aresta(){ return this->arestas; }
+vector<Heuristica> Grafo::get_heuristicas(){ return this->heuristicas; }
 
 // Setters
 void Grafo::set_orientado(bool orientado){
@@ -65,6 +66,11 @@ void Grafo::set_aresta(vector<Aresta> aresta){
 void Grafo::add_aresta(string inicio_aresta, string fim_aresta, int custo){
     Aresta aresta(inicio_aresta, fim_aresta, custo);
     this->arestas.push_back(aresta);
+}
+
+void Grafo::add_heuristica(string h_inicio, string h_fim, int h_heuristica){
+    Heuristica h(h_inicio, h_fim, h_heuristica);
+    this->heuristicas.push_back(h);
 }
 
 // // Retorna a quantidade de arestas

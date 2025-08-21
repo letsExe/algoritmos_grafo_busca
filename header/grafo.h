@@ -49,6 +49,7 @@ class Heuristica{
 class Grafo{
     private:
         vector<Aresta> arestas; //arestas
+        vector<Heuristica> heuristicas;
         bool orientado;
 
     public:
@@ -57,6 +58,7 @@ class Grafo{
         // Getters
         bool get_orientado();
         vector<Aresta> get_aresta();
+        vector<Heuristica> get_heuristicas();
 
         // Setters
         void set_orientado(bool orientado);
@@ -64,6 +66,7 @@ class Grafo{
 
         // Adiciona uma aresta ao grafo
         void add_aresta(string inicio_aresta, string fim_aresta, int custo);
+        void add_heuristica(string h_inicio, string h_fim, int h_heuristica);
 
         // Retorna a quantidade de arestas
         // size_t get_qtd_arestas(){

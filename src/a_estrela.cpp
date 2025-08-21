@@ -1,6 +1,6 @@
-#include "../header/arquivo.h"
 #include "../header/a_estrela.h"
 #include "../header/grafo.h"
+#include "../header/arquivo.h"
 
 
 No::No(string nome, string pai, int g, int h) {
@@ -11,96 +11,107 @@ No::No(string nome, string pai, int g, int h) {
     this->f = g + h;
 }
 
-bool No::operator>(const No &outro){
-    return f > outro.f;
+// Sobrecarga do operador > para a fila de prioridade (min-heap)
+// Retorna true se this->f for maior que outro.f
+bool No::operator>(const No &outro) const {
+    return this->f > outro.f;
 }
 
-// Função auxiliar para obter o valor da heurística para um nó específico
-int No::get_heuristica_para_no(Grafo &grafo, string &nome_no){
-    vector<Heuristica> heuristica = grafo.get_heuristicas();
-
-    for(int i = 0; i < heuristica.size(); i++){
-        if(heuristica[i].get_h_inicio() == nome_no)
-            return heuristica[i].get_h_heuristica();
-    }
-    return 0;
-}
-
-// Declaração da função do algoritmo A*
-void No::a_estrela(Grafo& grafo, string inicio, string fim){
-    priority_queue<No, vector<No>, greater<No>> fronteira;
-
-    map<string, int> custo_para_chegar;
-    map<string, string> pais;
-
-    fronteira.push(No(inicio, "", 0, get_heuristica_para_no(grafo, inicio)));
-    custo_para_chegar[inicio] = 0;
-
-    int interacao = 1;
-    cout << "Inicio da execucao: " << endl;
-
-    while(!fronteira.empty()){
-        cout << "Iteracao " << interacao++ << ":" << endl;
-
-        priority_queue<No, vector<No>, greater<No>> temp_q = fronteira;
-        cout << "Lista: ";
-
-        while(!temp_q.empty()){
-            No n = temp_q.top();
-            temp_q.pop();
-            cout << "(" << n.nome << ": " << n.g << "+" << n.h << "=" << n.f << ") ";
+// Retorna o valor da heurística de um nó
+int No::get_heuristica_para_no(Grafo &grafo, string nome_no) {
+    for (auto& heuristica : grafo.get_heuristicas()) {
+        if (heuristica.get_h_inicio() == nome_no) {
+            return heuristica.get_h_heuristica();
         }
+    }
+    return 0; // Se a heurística não for encontrada, retorna 0
+}
 
-        cout << endl;
-        cout << "Medida de desnsempenho: tem q decidir" << endl;
+// Função principal do algoritmo A*
+void No::algoritmo_a_estrela(Grafo& grafo, string inicio, string fim) {
+    // Fila de prioridade para os nós a serem explorados (lista aberta)
+    priority_queue<No, vector<No>, greater<No>> lista_aberta;
 
-        No atual = fronteira.top();
-        fronteira.pop();
+    // Map para armazenar o nó pai de cada nó para reconstrução do caminho
+    map<string, string> caminho;
 
+    // Map para armazenar o menor custo g (distância) encontrado para cada nó
+    map<string, int> g_custos;
 
-        if(atual.nome == fim){
-            cout << "Fim da execução" << endl;
-            cout << "Distância: " << atual.g << endl;
+    // Inicializa o nó de partida
+    int h_inicio = get_heuristica_para_no(grafo, inicio);
+    lista_aberta.push(No(inicio, "", 0, h_inicio));
+    g_custos[inicio] = 0;
 
-            string caminho_str = "";
-            string passo = fim;
-            while(passo != ""){
-                caminho_str = passo + (caminho_str.empty() ? "" : "-") + caminho_str;
-                passo = pais[passo];
+    int nos_expandidos = 0;
+    cout << "Inicio da execucao\n";
+
+    // Loop principal do A*
+    while (!lista_aberta.empty()) {
+        No atual = lista_aberta.top();
+        lista_aberta.pop();
+        nos_expandidos++;
+
+        // Checa se o nó atual é o objetivo
+        if (atual.get_nome() == fim) {
+            cout << "\nFim da execucao\n";
+            cout << "Distancia: " << atual.get_g() << "\n";
+            
+            // Reconstroi e imprime o caminho
+            string no_caminho = fim;
+            string caminho_reverso = no_caminho;
+            while (caminho.find(no_caminho) != caminho.end()) {
+                no_caminho = caminho[no_caminho];
+                if (no_caminho != "") {
+                    caminho_reverso = no_caminho + " -> " + caminho_reverso;
+                }
             }
-            cout << "Caminho: " << caminho_str << endl;
-            cout << "Medida de desempenho: valor_final_y" << endl; // Substitua pela sua medida de desempenho
+            cout << "Caminho: " << caminho_reverso << "\n";
+            cout << "Medida de desempenho: " << nos_expandidos << "\n";
             return;
         }
 
-        vector<Aresta> arestas = grafo.get_aresta();
-        for(int i = 0; i < arestas.size(); i++){
-            Aresta aresta = arestas[i];
+        cout << "Iteracao " << nos_expandidos << ":\n";
+        cout << "Lista: (nó: dist + h = soma)\n";
 
-            string vizinho = "";
-            if(aresta.get_lig_inicio() == atual.nome){
-                vizinho = aresta.get_lig_fim();
+        // Explora os vizinhos
+        for (auto& aresta : grafo.get_aresta()) {
+            string vizinho_nome;
+            int custo;
+            
+            // Lógica para grafos orientados
+            if (grafo.get_orientado() && aresta.get_lig_inicio() == atual.get_nome()) {
+                vizinho_nome = aresta.get_lig_fim();
+                custo = aresta.get_custo();
+            } 
+            // Lógica para grafos não orientados
+            else if (!grafo.get_orientado() && aresta.get_lig_inicio() == atual.get_nome()) {
+                vizinho_nome = aresta.get_lig_fim();
+                custo = aresta.get_custo();
+            } else if (!grafo.get_orientado() && aresta.get_lig_fim() == atual.get_nome()) {
+                vizinho_nome = aresta.get_lig_inicio();
+                custo = aresta.get_custo();
+            } else {
+                continue; // Pula para a próxima aresta
             }
 
-            else if (aresta.get_lig_fim() == atual.nome && !grafo.get_orientado()){
-                vizinho = aresta.get_lig_inicio();
-            }
-            
-            else 
-                continue;
-            
+            int novo_g = atual.get_g() + custo;
 
-            int novo_custo = atual.g + aresta.get_custo();
+            // Verifica se o novo caminho é mais curto
+            if (g_custos.find(vizinho_nome) == g_custos.end() || novo_g < g_custos[vizinho_nome]) {
+                g_custos[vizinho_nome] = novo_g;
+                caminho[vizinho_nome] = atual.get_nome();
+                
+                int h_vizinho = get_heuristica_para_no(grafo, vizinho_nome);
+                int f_vizinho = novo_g + h_vizinho;
 
-            if (custo_para_chegar.find(vizinho) == custo_para_chegar.end() || novo_custo < custo_para_chegar[vizinho]) {
-                custo_para_chegar[vizinho] = novo_custo;
-                pais[vizinho] = atual.nome;
-                int h_vizinho = get_heuristica_para_no(grafo, vizinho);
-                fronteira.push(No(vizinho, atual.nome, novo_custo, h_vizinho));
+                lista_aberta.push(No(vizinho_nome, atual.get_nome(), novo_g, h_vizinho));
+                cout << "(" << vizinho_nome << ": " << novo_g << " + " << h_vizinho << " = " << f_vizinho << ")\t";
             }
         }
-    
+        cout << "\nMedida de desempenho: " << nos_expandidos << "\n\n";
     }
-    cout << "Caminho não encontrado!" << endl;
-}
 
+    // Se a lista de nós a ser explorados ficar vazia e o objetivo não foi alcançado
+    cout << "\nNenhum caminho foi encontrado.\n";
+}
