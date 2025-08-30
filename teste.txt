@@ -1,6 +1,6 @@
 ponto_inicial(a0).
 ponto_final(f0).
-orientado(n).
+orientado(s).
 
 pode_ir(a0,b0,95).
 pode_ir(a0,c0,44).
