@@ -28,7 +28,7 @@ int No::get_heuristica_para_no(Grafo &grafo, string nome_no) {
 }
 
 // Função principal do algoritmo A*
-void No::algoritmo_a_estrela(Grafo& grafo, string inicio, string fim) {
+void No::algoritmo_a_estrela(Grafo& grafo, string inicio, string fim, int comprimento_maximo){
     // Fila de prioridade para os nós a serem explorados (lista aberta)
     priority_queue<No, vector<No>, greater<No>> lista_aberta;
 
@@ -38,17 +38,57 @@ void No::algoritmo_a_estrela(Grafo& grafo, string inicio, string fim) {
     // Map para armazenar o menor custo g (distância) encontrado para cada nó
     map<string, int> g_custos;
 
-    // Inicializa o nó de partida
+// Inicializa o nó de partida
     int h_inicio = get_heuristica_para_no(grafo, inicio);
     lista_aberta.push(No(inicio, "", 0, h_inicio));
     g_custos[inicio] = 0;
 
     int nos_expandidos = 0;
     cout << "Inicio da execucao\n";
+    if (comprimento_maximo != numeric_limits<int>::max()) {
+        //cout << "Qual o comprimento do fio?\n";
+        cout << comprimento_maximo << "\n";
+    }
 
     // Loop principal do A*
     while (!lista_aberta.empty()) {
         No atual = lista_aberta.top();
+
+        // Se o bônus do fio estiver ativo, verifique a condição
+        if (comprimento_maximo != numeric_limits<int>::max()) {
+            cout << "Fio restante: " << comprimento_maximo - atual.get_g();
+            if (comprimento_maximo - atual.get_g() <= 0) {
+                 cout << " - Caminho descartado\n";
+                 lista_aberta.pop();
+                 continue; // Descarta o caminho e continua
+            }
+        }
+        // Se for o primeiro nó a ser expandido, a iteração é 1
+        if (nos_expandidos == 0) {
+            cout << "Iteracao " << nos_expandidos + 1 << ":\n";
+        } else {
+            cout << "\nIteracao " << nos_expandidos + 1 << ":\n";
+        }
+
+        // --- Lógica para imprimir a lista ordenada (como na sua imagem) ---
+        vector<No> temp_nodes;
+        while (!lista_aberta.empty()) {
+            temp_nodes.push_back(lista_aberta.top());
+            lista_aberta.pop();
+        }
+        sort(temp_nodes.begin(), temp_nodes.end(), [](const No& a, const No& b) {
+            return a.get_f() < b.get_f();
+        });
+        
+        cout << "Lista: ";
+        for (const auto& node : temp_nodes) {
+            cout << "(" << node.get_nome() << ": " << node.get_g() << " + " << node.get_h() << " = " << node.get_f() << ") ";
+            lista_aberta.push(node); // Coloca de volta na priority_queue
+        }
+        cout << "\n";
+        // --- Fim da lógica de impressão ordenada ---
+
+
         lista_aberta.pop();
         nos_expandidos++;
 
@@ -70,9 +110,6 @@ void No::algoritmo_a_estrela(Grafo& grafo, string inicio, string fim) {
             cout << "Medida de desempenho: " << nos_expandidos << "\n";
             return;
         }
-
-        cout << "Iteracao " << nos_expandidos << ":\n";
-        cout << "Lista: (nó: dist + h = soma)\n";
 
         // Explora os vizinhos
         for (auto& aresta : grafo.get_aresta()) {
@@ -96,6 +133,12 @@ void No::algoritmo_a_estrela(Grafo& grafo, string inicio, string fim) {
             }
 
             int novo_g = atual.get_g() + custo;
+            // --- Lógica do Bônus: verifica se o novo caminho é viável ---
+            if (novo_g > comprimento_maximo) {
+                // Caminho excede o comprimento do fio, então ele é descartado
+                cout << "\nFio restante " << comprimento_maximo - novo_g << " - Caminho descartado\n";
+                continue; // Pula para a próxima aresta
+            }
 
             // Verifica se o novo caminho é mais curto
             if (g_custos.find(vizinho_nome) == g_custos.end() || novo_g < g_custos[vizinho_nome]) {
