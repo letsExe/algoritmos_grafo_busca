@@ -1,5 +1,4 @@
 #include "../header/arquivo.h"
-#include "../header/grafo.h"
 
 Arquivo::Arquivo(string ponto_final, string ponto_inical){
 this->ponto_final = ponto_final;

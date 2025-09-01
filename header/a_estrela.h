@@ -7,6 +7,7 @@
 #include <map>
 #include <queue>
 #include <algorithm>
+#include <limits>
 
 using namespace std;
 
@@ -36,7 +37,7 @@ class No {
         int get_heuristica_para_no(Grafo &grafo, string nome_no);
 
         // Declaração da função do algoritmo A*
-        void algoritmo_a_estrela(Grafo& grafo, string inicio, string fim);
+        void algoritmo_a_estrela(Grafo& grafo, string inicio, string fim, int comprimento_maximo);
 };
 
 #endif
