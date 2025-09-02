@@ -12,7 +12,7 @@ void imprimir_opcoes(){
 }
 
 void cor_sistema(){
-    system("Color 1D");
+    system("Color 7D");
 }
 
 
@@ -66,14 +66,14 @@ void menu(){
 
             case 4:
                 {
-                    // cout << "Qual o comprimento do fio?\n";
-                    // cin >> comprimento_do_fio;
+                    cout << "Qual o comprimento do fio?\n";
+                    cin >> comprimento_do_fio;
 
-                    // string ponto_inicial = config_arquivo.get_ponto_inical();
-                    // string ponto_final = config_arquivo.get_ponto_final();
+                    string ponto_inicial = config_arquivo.get_ponto_inical();
+                    string ponto_final = config_arquivo.get_ponto_final();
 
-                    // cout << "Executando o bonus..." << endl;
-                    // no.algoritmo_a_estrela(grafo, ponto_inicial, ponto_final, comprimento_do_fio);
+                    cout << "Executando o bonus..." << endl;
+                    no.algoritmo_a_estrela(grafo, ponto_inicial, ponto_final, comprimento_do_fio);
                 }
 
                 break;
