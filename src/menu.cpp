@@ -22,7 +22,7 @@ void menu(){
     Grafo grafo(false, arestas_vazias);
     Aresta aresta_template("", "", 0);
     Heuristica heuristica_template("", "", 0);
-    string nome_arquivo = "teste.txt";
+    string nome_arquivo;
     No no("", "", 0, 0);
 
     int op, comprimento_do_fio;
@@ -36,7 +36,8 @@ void menu(){
 
             case 1:
                 {    
-                    //cin >> nome_arquivo;
+                    cout << "Digite o nome do arquivo de leitura (inclua o .txt ao final): ";
+                    cin >> nome_arquivo;
                     cout << "Lendo arquivo de configuracao: " << nome_arquivo << "..." << endl;
                     if (!config_arquivo.ler_arquivo(nome_arquivo, grafo, config_arquivo, aresta_template, heuristica_template)) {
                         cerr << "Erro fatal: Falha na leitura do arquivo de entrada." << endl;
