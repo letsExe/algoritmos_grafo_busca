@@ -8,10 +8,16 @@ No::No(string nome, string pai, int g, int h) {
     this->f = g + h;
 }
 
+// Descrição: Sobrecarga do operador > para comparar dois nós com base no valor de f (custo total estimado = g + h).
+// Pré-condição: Ambos os objetos No devem estar inicializados corretamente com valores válidos de f.
+// Pós-condição: Retorna true se o valor de f do nó atual for maior que o do nó passado como parâmetro;
 bool No::operator>(const No &outro) const {
     return this->f > outro.f;
 }
 
+// Descrição: Retorna o valor da heurística associada a um nó específico no grafo.
+// Pré-condição: O grafo deve  existir e  o  nome_no deve corresponder ao identificador de um nó válido no grafo.
+// Pós-condição: Retorna o valor inteiro da heurística se o nó for encontrado;
 int No::get_heuristica_para_no(Grafo &grafo, string nome_no) {
     for (auto& heuristica : grafo.get_heuristicas()) {
         if (heuristica.get_h_inicio() == nome_no) {
@@ -21,6 +27,9 @@ int No::get_heuristica_para_no(Grafo &grafo, string nome_no) {
     return 0;
 }
 
+// Descrição: Implementa o algoritmo A* (A-estrela) para encontrar o melhor caminho entre um nó inicial e um nó final
+// Pré-condição:O grafo deve existir,comprimento_maximo deve ser um inteiro positivo
+// Pós-condição:Se existir caminho do nó inicial até o nó final, imprime o caminho encontrado,o custo total.
 void No::algoritmo_a_estrela(Grafo& grafo, string inicio, string fim, int comprimento_maximo) {
     priority_queue<No, vector<No>, greater<No>> lista_aberta;
     map<string, string> caminho;

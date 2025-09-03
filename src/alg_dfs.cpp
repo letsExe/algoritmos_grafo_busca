@@ -2,29 +2,23 @@
 #include <iostream>
 #include <vector>
 
-// --- Construtor padrão ---
 DFS::DFS() {}
 
-// --- Getters ---
+
 map<string, bool> DFS::get_visitado() {
     return visitado;
 }
 
-// --- Setters ---
+
 void DFS::set_visitado(map<string, bool> v) {
     this->visitado = v;
 }
 
-// --- Função recursiva auxiliar ---
-bool DFS::dfs_recursivo(
-    const string &vertice,
-    const string &fim,
-    Grafo &grafo,
-    vector<string> &caminho,
-    int &custo_final,
-    int custo_atual,
-    int &iteracao
-) {
+//Descrição Função recursiva auxiliar
+//Pré-condição O grafo deve estar corretamente inicializado e conter os vértices e arestas
+//Pós-condição Retorna 'true' se o vértice 'fim' foi encontrado, caso contrário 'false'.
+bool DFS::dfs_recursivo(const string &vertice,const string &fim,Grafo &grafo,vector<string> &caminho,int &custo_final,int custo_atual,int &iteracao) {
+
     visitado[vertice] = true;
     caminho.push_back(vertice);
 
@@ -66,6 +60,9 @@ bool DFS::dfs_recursivo(
 }
 
 // --- Executa a DFS e imprime a saída no formato especificado ---
+//Descrição Executa a busca em profundidade (DFS) no grafo entre dois vértices dados.
+//Pré-condição O grafo deve estar corretamente construído e possuir vértices e arestas.
+//Pós-condição Imprime no console o progresso da busca e o resultado final
 void DFS::executar(Grafo &grafo, const string &inicio, const string &fim) {
     // Inicializações
     visitado.clear();
