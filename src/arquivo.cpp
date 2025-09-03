@@ -1,8 +1,5 @@
 #include "../header/arquivo.h"
 
-//Construtor da classe Arquivo
-//Pré-condição: Nenhuma
-//Pós-condição: Um objeto Arquivo é criado com os pontos inicial e final.
 Arquivo::Arquivo(string ponto_final, string ponto_inical){
     this->ponto_final = ponto_final;
     this->ponto_inical = ponto_inical;
@@ -24,18 +21,18 @@ void Arquivo::set_ponto_inical(string ponto_inical){
 //Pós-condição: O objeto 'grafo' é populado com os dados do arquivo. Retorna 'true' em caso de sucesso e 'false' se o arquivo não puder ser aberto.
 bool Arquivo::ler_arquivo(string arquivo_entrada, Grafo &grafo, Arquivo &config, Aresta &aresta, Heuristica& h){
     string linha, sub_string;
-    size_t pos_ini, pos_meio, pos_final; // Usar size_t é uma boa prática para posições de string
+    size_t pos_ini, pos_meio, pos_final;
 
-    ifstream arq(arquivo_entrada); // Abre o arquivo de entrada.
+    ifstream arq(arquivo_entrada);
 
-    // Verifica se o arquivo foi aberto corretamente.
+
     if (!arq.is_open()) {
         cerr << "Erro ao abrir arquivo de entrada: " << arquivo_entrada << endl;
         return false;
     }
 
     while(getline(arq, linha)){
-        // Ignora linhas vazias ou de comentário
+
         if(linha.empty() || linha.find("---") != string::npos || linha.find("Arquivo grande") != string::npos){
             continue;
         }

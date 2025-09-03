@@ -1,8 +1,6 @@
 #include "../header/grafo.h"
 
-//Descrição
-//Pré-condição
-//Pós-condição
+
 Aresta::Aresta(string lig_inicio, string lig_fim, int lig_custo){
     this->lig_inicio = lig_inicio;
     this->lig_fim = lig_fim;

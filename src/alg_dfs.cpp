@@ -22,18 +22,16 @@ bool DFS::dfs_recursivo(const string &vertice,const string &fim,Grafo &grafo,vec
     visitado[vertice] = true;
     caminho.push_back(vertice);
 
-    // Exibe a iteração atual no formato solicitado
     cout << "Iteração " << iteracao++ << ":" << endl;
     // Adaptamos a "Lista" para mostrar o nó atual e a distância acumulada até ele
     cout << "Lista: (" << vertice << ": dist = " << custo_atual << ")" << endl << endl;
 
-    // Caso base: se o vértice atual é o destino, encontramos o caminho
+    // o vértice atual é o destino, encontramos o caminho
     if (vertice == fim) {
         custo_final = custo_atual;
         return true;
     }
 
-    // Itera por todas as arestas para encontrar os vizinhos do vértice atual
     for (Aresta &aresta : grafo.get_aresta()) {
         string vizinho;
         bool aresta_valida = false;
@@ -54,12 +52,11 @@ bool DFS::dfs_recursivo(const string &vertice,const string &fim,Grafo &grafo,vec
         }
     }
 
-    // Backtracking: Se nenhum vizinho levou ao destino, remove o vértice do caminho
     caminho.pop_back();
     return false;
 }
 
-// --- Executa a DFS e imprime a saída no formato especificado ---
+//Executa a DFS e imprime a saída no formato especificado
 //Descrição Executa a busca em profundidade (DFS) no grafo entre dois vértices dados.
 //Pré-condição O grafo deve estar corretamente construído e possuir vértices e arestas.
 //Pós-condição Imprime no console o progresso da busca e o resultado final

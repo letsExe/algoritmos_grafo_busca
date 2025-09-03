@@ -32,9 +32,9 @@ int No::get_heuristica_para_no(Grafo &grafo, string nome_no) {
     return 0;
 }
 
-// Descrição: Implementa o algoritmo A* (A-estrela) para encontrar o melhor caminho entre um nó inicial e um nó final
-// Pré-condição:O grafo deve existir,comprimento_maximo deve ser um inteiro positivo
-// Pós-condição:Se existir caminho do nó inicial até o nó final, imprime o caminho encontrado,o custo total.
+// Descrição: Imprime uma cópia da fila de prioridade passada como parâmetro, exibindo os nós em ordem crescente de f (g + h).
+// Pré-condição: A fila de prioridade deve existir
+// Pós-condição: O conteúdo da fila de prioridade é impresso
 // imprime uma cópia da fila (menor f primeiro)
 void No::imprime_lista(priority_queue<No, vector<No>, greater<No>> pq) {
     vector<No> itens;
@@ -52,6 +52,9 @@ void No::imprime_lista(priority_queue<No, vector<No>, greater<No>> pq) {
     cout << "\n";
 }
 
+// Descrição: Implementa o algoritmo A* (A-estrela) para encontrar o melhor caminho entre um nó inicial e um nó final
+// Pré-condição:O grafo deve existir,comprimento_maximo deve ser um inteiro positivo
+// Pós-condição:Se existir caminho do nó inicial até o nó final, imprime o caminho encontrado,o custo total.
 void No::algoritmo_a_estrela(Grafo& grafo, string inicio, string fim, int comprimento_maximo) {
     priority_queue<No, vector<No>, greater<No>> fronteira;
     map<string, string> pai;

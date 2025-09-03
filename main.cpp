@@ -7,7 +7,7 @@ using namespace std;
 
 int main(){
     
-    //cor_sistema();
+    cor_sistema();
     menu();
 
     return 0;

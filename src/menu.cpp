@@ -16,11 +16,10 @@ void imprimir_opcoes(){
 // Descrição: Altera a cor do console do Windows usando o comando.
 // Pré-condição: Nenhuma
 // Pós-condição: A cor do console é alterada para o esquema definido (1D).
-/*
 void cor_sistema(){
     system("Color 7D");
 }
-*/
+
 
 //Descrição: Mostra as opções do menu e executa a opção que o usuário desejar
 //Pré-condição: Nenhuma
@@ -31,7 +30,7 @@ void menu(){
     Grafo grafo(false, arestas_vazias);
     Aresta aresta_template("", "", 0);
     Heuristica heuristica_template("", "", 0);
-    string nome_arquivo;
+    //string nome_arquivo;
     No no("", "", 0, 0);
     auto dfs= DFS();
     int op, comprimento_do_fio;

@@ -65,7 +65,16 @@ class Grafo{
         void set_aresta(vector<Aresta> aresta);
 
         // Adiciona uma aresta ao grafo
+        // Adiciona uma aresta ao grafo
+        // Descrição: Cria um objeto do tipo Aresta e o insere na lista de arestas do grafo.
+        // Pré-condição: Os nomes dos vértices devem ser válidos (não vazios) e o custo deve ser um valor inteiro >= 0.
+        // Pós-condição: A lista de arestas do grafo (`this->arestas`) conterá a nova aresta adicionada.
         void add_aresta(string inicio_aresta, string fim_aresta, int custo);
+
+        // Adi ciona uma heurística ao grafo
+        // Descrição: Cria um objeto do tipo Heuristica e o insere na lista de heurísticas do grafo.
+        // Pré-condição: Os nomes dos vértices devem ser válidos (não vazios) e o valor heurístico deve ser um inteiro >= 0.
+        // Pós-condição: A lista de heurísticas do grafo (`this->heuristicas`) conterá a nova heurística adicionada.
         void add_heuristica(string h_inicio, string h_fim, int h_heuristica);
 
         // Retorna a quantidade de arestas
