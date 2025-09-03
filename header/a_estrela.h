@@ -33,6 +33,8 @@ class No {
         int get_h() const { return h; }
         int get_f() const { return f; }
 
+        void imprime_lista(priority_queue<No, vector<No>, greater<No>> pq);
+
         // Função auxiliar para obter o valor da heurística para um nó específico
         int get_heuristica_para_no(Grafo &grafo, string nome_no);
 

@@ -18,7 +18,7 @@ void imprimir_opcoes(){
 // Pós-condição: A cor do console é alterada para o esquema definido (1D).
 /*
 void cor_sistema(){
-    system("Color 1D");
+    system("Color 7D");
 }
 */
 
@@ -31,7 +31,7 @@ void menu(){
     Grafo grafo(false, arestas_vazias);
     Aresta aresta_template("", "", 0);
     Heuristica heuristica_template("", "", 0);
-   // string nome_arquivo = "../teste.txt";
+    string nome_arquivo;
     No no("", "", 0, 0);
     auto dfs= DFS();
     int op, comprimento_do_fio;
@@ -47,11 +47,9 @@ void menu(){
 
             case 1:
                 {    
-                    //cin >> nome_arquivo;
-                    std::cout <<"Informe o que nome do arquivo" << std::endl;
-                    std::getline(std::cin, nome_arquivo);
-
-                    //cout << "Lendo arquivo de configuracao: " << nome_arquivo << "..." << endl;
+                    cout << "Digite o nome do arquivo de leitura (inclua o .txt ao final): ";
+                    cin >> nome_arquivo;
+                    cout << "Lendo arquivo de configuracao: " << nome_arquivo << "..." << endl;
                     if (!config_arquivo.ler_arquivo(nome_arquivo, grafo, config_arquivo, aresta_template, heuristica_template)) {
                         cerr << "Erro fatal: Falha na leitura do arquivo de entrada." << endl;
                         exit(1); // Termina o programa se o arquivo não puder ser lido
@@ -99,14 +97,14 @@ void menu(){
 
             case 4:
                 {
-                    // cout << "Qual o comprimento do fio?\n";
-                    // cin >> comprimento_do_fio;
+                    cout << "Qual o comprimento do fio?\n";
+                    cin >> comprimento_do_fio;
 
-                    // string ponto_inicial = config_arquivo.get_ponto_inical();
-                    // string ponto_final = config_arquivo.get_ponto_final();
+                    string ponto_inicial = config_arquivo.get_ponto_inical();
+                    string ponto_final = config_arquivo.get_ponto_final();
 
-                    // cout << "Executando o bonus..." << endl;
-                    // no.algoritmo_a_estrela(grafo, ponto_inicial, ponto_final, comprimento_do_fio);
+                    cout << "Executando o bonus..." << endl;
+                    no.algoritmo_a_estrela(grafo, ponto_inicial, ponto_final, comprimento_do_fio);
                 }
 
                 break;

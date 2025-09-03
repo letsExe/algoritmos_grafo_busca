@@ -1,4 +1,7 @@
 #include "../header/a_estrela.h"
+#include <algorithm>
+#include <iostream>
+using namespace std;
 
 No::No(string nome, string pai, int g, int h) {
     this->nome = nome;
@@ -18,10 +21,12 @@ bool No::operator>(const No &outro) const {
 // Descrição: Retorna o valor da heurística associada a um nó específico no grafo.
 // Pré-condição: O grafo deve  existir e  o  nome_no deve corresponder ao identificador de um nó válido no grafo.
 // Pós-condição: Retorna o valor inteiro da heurística se o nó for encontrado;
+// h(n) — como seu arquivo sempre traz h(n, f0, v), basta casar por origem
 int No::get_heuristica_para_no(Grafo &grafo, string nome_no) {
-    for (auto& heuristica : grafo.get_heuristicas()) {
-        if (heuristica.get_h_inicio() == nome_no) {
-            return heuristica.get_h_heuristica();
+    vector<Heuristica> hs = grafo.get_heuristicas();
+    for (int i = 0; i < (int)hs.size(); i++) {
+        if (hs[i].get_h_inicio() == nome_no) {
+            return hs[i].get_h_heuristica();
         }
     }
     return 0;
@@ -30,161 +35,138 @@ int No::get_heuristica_para_no(Grafo &grafo, string nome_no) {
 // Descrição: Implementa o algoritmo A* (A-estrela) para encontrar o melhor caminho entre um nó inicial e um nó final
 // Pré-condição:O grafo deve existir,comprimento_maximo deve ser um inteiro positivo
 // Pós-condição:Se existir caminho do nó inicial até o nó final, imprime o caminho encontrado,o custo total.
+// imprime uma cópia da fila (menor f primeiro)
+void No::imprime_lista(priority_queue<No, vector<No>, greater<No>> pq) {
+    vector<No> itens;
+    while (!pq.empty()) { itens.push_back(pq.top()); pq.pop(); }
+    sort(itens.begin(), itens.end(), [](const No& a, const No& b){
+        if (a.get_f() != b.get_f()) return a.get_f() < b.get_f();
+        return a.get_nome() < b.get_nome();
+    });
+    cout << "Lista: ";
+    for (int i = 0; i < (int)itens.size(); i++) {
+        const No &n = itens[i];
+        cout << "(" << n.get_nome() << ": " << n.get_g()
+             << " + " << n.get_h() << " = " << n.get_f() << ") ";
+    }
+    cout << "\n";
+}
+
 void No::algoritmo_a_estrela(Grafo& grafo, string inicio, string fim, int comprimento_maximo) {
-    priority_queue<No, vector<No>, greater<No>> lista_aberta;
-    map<string, string> caminho;
-    map<string, int> g_custos;
+    priority_queue<No, vector<No>, greater<No>> fronteira;
+    map<string, string> pai;
+    map<string, int> g_custo;
 
-    int h_inicio = get_heuristica_para_no(grafo, inicio);
-    lista_aberta.push(No(inicio, "", 0, h_inicio));
-    g_custos[inicio] = 0;
+    // inicia
+    fronteira.push(No(inicio, "", 0, get_heuristica_para_no(grafo, inicio)));
+    g_custo[inicio] = 0;
 
-    int nos_expandidos = 0;
-    cout << "Executando Algoritmo A* para encontrar o melhor caminho..." << endl;
     cout << "Inicio da execucao\n";
     if (comprimento_maximo != numeric_limits<int>::max()) {
-        cout << "Qual o comprimento do fio?\n";
-        cout << comprimento_maximo << "\n";
+        cout << "Qual o comprimento do fio?\n" << comprimento_maximo << "\n";
     }
-    
-    // A primeira iteração é tratada como um caso especial para a impressão
-    No primeiro_no = lista_aberta.top();
-    lista_aberta.pop();
 
-    cout << "Iteracao 1:\n";
-    cout << "Lista: (" << primeiro_no.get_nome() << ": " << primeiro_no.get_g() << " + " << primeiro_no.get_h() << " = " << primeiro_no.get_f() << ") ";
-    
-    for (auto& aresta : grafo.get_aresta()) {
-        if (aresta.get_lig_inicio() == primeiro_no.get_nome()) {
-            string vizinho_nome = aresta.get_lig_fim();
-            int custo = aresta.get_custo();
+    int iter = 0;              // nós expandidos até AGORA
+    bool orientado = grafo.get_orientado();
 
-            int novo_g = primeiro_no.get_g() + custo;
-            if (novo_g > comprimento_maximo) {
+    while (!fronteira.empty()) {
+        // 1) imprime a iteração ATUAL (antes de expandir)
+        cout << "\nIteracao " << (iter + 1) << ":\n";
+        imprime_lista(fronteira);
+        cout << "Medida de desempenho: " << iter << "\n";
+
+        // 2) pega o melhor e verifica fio restante
+        // 2) pega o melhor
+        No atual = fronteira.top();
+        fronteira.pop();
+        
+        // 2.1) mostra fio restante (se for o modo bônus)
+        if (comprimento_maximo != numeric_limits<int>::max()) {
+            int restante = comprimento_maximo - atual.get_g();
+            cout << "Fio restante: " << restante;
+
+            // se estourou (menor que zero), descarta a expansão desta iteração
+            if (restante < 0) {
+                cout << " - Caminho descartado\n";
+                iter++;            // ainda assim conta a iteração
                 continue;
             }
-
-            g_custos[vizinho_nome] = novo_g;
-            caminho[vizinho_nome] = primeiro_no.get_nome();
-            
-            int h_vizinho = get_heuristica_para_no(grafo, vizinho_nome);
-            int f_vizinho = novo_g + h_vizinho;
-
-            lista_aberta.push(No(vizinho_nome, primeiro_no.get_nome(), novo_g, h_vizinho));
+            cout << "\n";
         }
-    }
 
-    vector<No> temp_nodes;
-    while (!lista_aberta.empty()) {
-        temp_nodes.push_back(lista_aberta.top());
-        lista_aberta.pop();
-    }
-    sort(temp_nodes.begin(), temp_nodes.end(), [](No& a, No& b) {
-        return a.get_f() < b.get_f();
-    });
-    
-    for (auto& node : temp_nodes) {
-        cout << "(" << node.get_nome() << ": " << node.get_g() << " + " << node.get_h() << " = " << node.get_f() << ") ";
-        lista_aberta.push(node);
-    }
-    cout << "\nMedida de desempenho: 1\n";
-    nos_expandidos = 1;
-
-
-    while (!lista_aberta.empty()) {
-        No atual = lista_aberta.top();
-        lista_aberta.pop();
-
+        // 2.2) agora sim testa objetivo (permite restante == 0)
         if (atual.get_nome() == fim) {
+            iter++; // conta a iteração do objetivo
             cout << "\nFim da execucao\n";
             cout << "Distancia: " << atual.get_g() << "\n";
-            
-            // --- CÓDIGO DE RECONSTRUÇÃO DO CAMINHO CORRIGIDO ---
-            vector<string> path_nodes;
-            string current_node = fim;
-            while(current_node != "") {
-                path_nodes.push_back(current_node);
-                if (caminho.find(current_node) != caminho.end()) {
-                    current_node = caminho[current_node];
-                } else {
-                    current_node = ""; // Para o loop ao chegar ao início
-                }
-            }
 
-            cout << "Caminho: ";
-            for (int i = path_nodes.size() - 1; i >= 0; --i) {
-                cout << path_nodes[i];
-                if (i > 0) {
-                    cout << " -> ";
-                }
+            // reconstrói caminho
+            vector<string> path;
+            string v = fim;
+            path.push_back(v);
+            while (pai.find(v) != pai.end()) { v = pai[v]; path.push_back(v); }
+            for (int i = (int)path.size() - 1; i >= 0; --i) {
+                if (i == (int)path.size() - 1) cout << "Caminho: ";
+                cout << path[i] << (i ? " -> " : "\n");
             }
-            cout << "\n";
-            // --- FIM DO CÓDIGO CORRIGIDO ---
-
-            cout << "Medida de desempenho: " << nos_expandidos << "\n";
+            cout << "Medida de desempenho: " << iter << "\n";
             return;
         }
 
-        nos_expandidos++;
-        cout << "\nIteracao " << nos_expandidos << ":\n";
+        // 3) se for objetivo, conta a iteração e finaliza
+        if (atual.get_nome() == fim) {
+            iter++; // conta a iteração do objetivo
+            cout << "\nFim da execucao\n";
+            cout << "Distancia: " << atual.get_g() << "\n";
 
-        if (comprimento_maximo != numeric_limits<int>::max()) {
-            cout << "Fio restante: " << comprimento_maximo - atual.get_g();
-            if (comprimento_maximo - atual.get_g() <= 0) {
-                 cout << " - Caminho descartado\n";
-                 continue;
+            // reconstrói caminho
+            vector<string> path;
+            string v = fim;
+            while (true) {
+                path.push_back(v);
+                if (pai.find(v) == pai.end()) break;
+                v = pai[v];
             }
+            for (int i = (int)path.size() - 1; i >= 0; --i) {
+                if (i == (int)path.size() - 1) cout << "Caminho: ";
+                cout << path[i] << (i ? " -> " : "\n");
+            }
+
+            cout << "Medida de desempenho: " << iter << "\n";
+            return;
         }
-        
-        for (auto& aresta : grafo.get_aresta()) {
-            string vizinho_nome;
-            int custo;
-            
-            if (grafo.get_orientado() && aresta.get_lig_inicio() == atual.get_nome()) {
-                vizinho_nome = aresta.get_lig_fim();
-                custo = aresta.get_custo();
-            } else if (!grafo.get_orientado() && aresta.get_lig_inicio() == atual.get_nome()) {
-                vizinho_nome = aresta.get_lig_fim();
-                custo = aresta.get_custo();
-            } else if (!grafo.get_orientado() && aresta.get_lig_fim() == atual.get_nome()) {
-                vizinho_nome = aresta.get_lig_inicio();
-                custo = aresta.get_custo();
+
+        // 4) expande vizinhos
+        vector<Aresta> ar = grafo.get_aresta();
+        for (int i = 0; i < (int)ar.size(); i++) {
+            string viz; int custo;
+
+            if (ar[i].get_lig_inicio() == atual.get_nome()) {
+                viz = ar[i].get_lig_fim();
+                custo = ar[i].get_custo();
+            } else if (!orientado && ar[i].get_lig_fim() == atual.get_nome()) {
+                viz = ar[i].get_lig_inicio();
+                custo = ar[i].get_custo();
             } else {
                 continue;
             }
 
             int novo_g = atual.get_g() + custo;
 
-            if (comprimento_maximo != numeric_limits<int>::max() && novo_g > comprimento_maximo) {
+            // bônus: não enfileira se estourar o fio
+            if (comprimento_maximo != numeric_limits<int>::max() && novo_g > comprimento_maximo)
                 continue;
-            }
 
-            if (g_custos.find(vizinho_nome) == g_custos.end() || novo_g < g_custos[vizinho_nome]) {
-                g_custos[vizinho_nome] = novo_g;
-                caminho[vizinho_nome] = atual.get_nome();
-                
-                int h_vizinho = get_heuristica_para_no(grafo, vizinho_nome);
-                int f_vizinho = novo_g + h_vizinho;
-
-                lista_aberta.push(No(vizinho_nome, atual.get_nome(), novo_g, h_vizinho));
+            if (g_custo.find(viz) == g_custo.end() || novo_g < g_custo[viz]) {
+                g_custo[viz] = novo_g;
+                pai[viz] = atual.get_nome();
+                int h = get_heuristica_para_no(grafo, viz);
+                fronteira.push(No(viz, atual.get_nome(), novo_g, h));
             }
         }
 
-        vector<No> temp_nodes2;
-        priority_queue<No, vector<No>, greater<No>> temp_pq_copy = lista_aberta;
-        while (!temp_pq_copy.empty()) {
-            temp_nodes2.push_back(temp_pq_copy.top());
-            temp_pq_copy.pop();
-        }
-        sort(temp_nodes2.begin(), temp_nodes2.end(), [](No& a, No& b) {
-            return a.get_f() < b.get_f();
-        });
-        
-        cout << endl << "Lista: ";
-        for (auto& node : temp_nodes2) {
-            cout << "(" << node.get_nome() << ": " << node.get_g() << " + " << node.get_h() << " = " << node.get_f() << ") ";
-        }
-        cout << "\nMedida de desempenho: " << nos_expandidos << "\n";
+        // 5) terminou a expansão do 'atual'
+        iter++;
     }
 
     cout << "\nNenhum caminho foi encontrado.\n";
