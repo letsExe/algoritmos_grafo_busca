@@ -4,7 +4,8 @@
 #include "arquivo.h"
 #include "grafo.h"
 #include "a_estrela.h"
-#include "../header/alg_dfs.h"
+#include "alg_dfs.h"
+
 #include <stdio.h>
 #include <sstream>
 #include <chrono>

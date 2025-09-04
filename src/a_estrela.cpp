@@ -1,7 +1,6 @@
 #include "../header/a_estrela.h"
 #include <algorithm>
 #include <iostream>
-using namespace std;
 
 No::No(string nome, string pai, int g, int h) {
     this->nome = nome;
@@ -59,24 +58,32 @@ void No::algoritmo_a_estrela(Grafo& grafo, string inicio, string fim, int compri
     priority_queue<No, vector<No>, greater<No>> fronteira;
     map<string, string> pai;
     map<string, int> g_custo;
+    int nos_gerados = 0;
 
     // inicia
     fronteira.push(No(inicio, "", 0, get_heuristica_para_no(grafo, inicio)));
     g_custo[inicio] = 0;
+    nos_gerados++;
 
     cout << "Inicio da execucao\n";
     if (comprimento_maximo != numeric_limits<int>::max()) {
         cout << "Qual o comprimento do fio?\n" << comprimento_maximo << "\n";
     }
 
-    int iter = 0;              // nós expandidos até AGORA
+    int iter = 0; // nós expandidos até AGORA
     bool orientado = grafo.get_orientado();
+
+    // Cronômetro e contador
+    auto start = chrono::high_resolution_clock::now();
+    
 
     while (!fronteira.empty()) {
         // 1) imprime a iteração ATUAL (antes de expandir)
         cout << "\nIteracao " << (iter + 1) << ":\n";
         imprime_lista(fronteira);
-        cout << "Medida de desempenho: " << iter << "\n";
+
+        cout << "Medida de desempenho - Nos Gerados: " << nos_gerados << "\n";
+
 
         // 2) pega o melhor e verifica fio restante
         // 2) pega o melhor
@@ -112,30 +119,7 @@ void No::algoritmo_a_estrela(Grafo& grafo, string inicio, string fim, int compri
                 if (i == (int)path.size() - 1) cout << "Caminho: ";
                 cout << path[i] << (i ? " -> " : "\n");
             }
-            cout << "Medida de desempenho: " << iter << "\n";
-            return;
-        }
-
-        // 3) se for objetivo, conta a iteração e finaliza
-        if (atual.get_nome() == fim) {
-            iter++; // conta a iteração do objetivo
-            cout << "\nFim da execucao\n";
-            cout << "Distancia: " << atual.get_g() << "\n";
-
-            // reconstrói caminho
-            vector<string> path;
-            string v = fim;
-            while (true) {
-                path.push_back(v);
-                if (pai.find(v) == pai.end()) break;
-                v = pai[v];
-            }
-            for (int i = (int)path.size() - 1; i >= 0; --i) {
-                if (i == (int)path.size() - 1) cout << "Caminho: ";
-                cout << path[i] << (i ? " -> " : "\n");
-            }
-
-            cout << "Medida de desempenho: " << iter << "\n";
+            cout << "Medida de desempenho - Nos Gerados: " << nos_gerados << "\n";
             return;
         }
 
@@ -165,10 +149,10 @@ void No::algoritmo_a_estrela(Grafo& grafo, string inicio, string fim, int compri
                 pai[viz] = atual.get_nome();
                 int h = get_heuristica_para_no(grafo, viz);
                 fronteira.push(No(viz, atual.get_nome(), novo_g, h));
+                nos_gerados++;
             }
         }
 
-        // 5) terminou a expansão do 'atual'
         iter++;
     }
 

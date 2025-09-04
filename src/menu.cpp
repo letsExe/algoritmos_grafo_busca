@@ -17,7 +17,7 @@ void imprimir_opcoes(){
 // Pré-condição: Nenhuma
 // Pós-condição: A cor do console é alterada para o esquema definido (1D).
 void cor_sistema(){
-    system("Color 7D");
+    system("Color 0D");
 }
 
 
@@ -30,16 +30,16 @@ void menu(){
     Grafo grafo(false, arestas_vazias);
     Aresta aresta_template("", "", 0);
     Heuristica heuristica_template("", "", 0);
-    //string nome_arquivo;
     No no("", "", 0, 0);
-    auto dfs= DFS();
+    auto dfs = DFS();
+
     int op, comprimento_do_fio;
-    std::string nome_arquivo;
+    string nome_arquivo;
 
     do{
         imprimir_opcoes();
         cin >> op;
-        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << endl;
 
         switch (op){
@@ -66,13 +66,13 @@ void menu(){
                     string ponto_final = config_arquivo.get_ponto_final();
 
                     cout << "Executando Algoritmo A* para encontrar o melhor caminho..." << endl;
-                    auto start = std::chrono::high_resolution_clock::now();
+                    auto start = chrono::high_resolution_clock::now();
 
                     no.algoritmo_a_estrela(grafo, ponto_inicial, ponto_final, comprimento_do_fio);
 
-                    auto end = std::chrono::high_resolution_clock::now();
-                    std::chrono::duration<double> elapsed = end - start;
-                    std::cout << "Tempo de execucao " << elapsed.count() << " seconds\n";
+                    auto end = chrono::high_resolution_clock::now();
+                    chrono::duration<double> elapsed = end - start;
+                    cout << "Tempo de execucao " << elapsed.count() << " seconds\n";
 
                 }
 
@@ -83,12 +83,12 @@ void menu(){
                 string ponto_final = config_arquivo.get_ponto_final();
 
                 cout << "Executando Algoritmo DFS para encontrar o pior caminho..." << endl;
-                 auto start = std::chrono::high_resolution_clock::now();
+                 auto start = chrono::high_resolution_clock::now();
                 dfs.executar(grafo, ponto_inicial, ponto_final);
 
-                auto end = std::chrono::high_resolution_clock::now();
-                std::chrono::duration<double> elapsed = end - start;
-                std::cout << "Tempo de execucao " << elapsed.count() << " seconds\n";
+                auto end = chrono::high_resolution_clock::now();
+                chrono::duration<double> elapsed = end - start;
+                cout << "Tempo de execucao " << elapsed.count() << " seconds\n";
 
 
             }

@@ -17,16 +17,17 @@ void DFS::set_visitado(map<string, bool> v) {
 //Descrição Função recursiva auxiliar
 //Pré-condição O grafo deve estar corretamente inicializado e conter os vértices e arestas
 //Pós-condição Retorna 'true' se o vértice 'fim' foi encontrado, caso contrário 'false'.
-bool DFS::dfs_recursivo(const string &vertice,const string &fim,Grafo &grafo,vector<string> &caminho,int &custo_final,int custo_atual,int &iteracao) {
+bool DFS::dfs_recursivo(const string &vertice,const string &fim,Grafo &grafo,
+                        vector<string> &caminho,int &custo_final,
+                        int custo_atual,int &iteracao) {
 
     visitado[vertice] = true;
     caminho.push_back(vertice);
-
+    nos_gerados_iteracao++;
     cout << "Iteração " << iteracao++ << ":" << endl;
-    // Adaptamos a "Lista" para mostrar o nó atual e a distância acumulada até ele
-    cout << "Lista: (" << vertice << ": dist = " << custo_atual << ")" << endl << endl;
+    cout << "Lista: (" << vertice << ": dist = " << custo_atual << ")" << endl;
+    cout << "Medida de desempenho - Nos Gerados: " << nos_gerados_iteracao << endl << endl;
 
-    // o vértice atual é o destino, encontramos o caminho
     if (vertice == fim) {
         custo_final = custo_atual;
         return true;
@@ -45,16 +46,16 @@ bool DFS::dfs_recursivo(const string &vertice,const string &fim,Grafo &grafo,vec
         }
 
         if (aresta_valida && !visitado[vizinho]) {
-            // Se a chamada recursiva encontrar o 'fim', propaga o sucesso para cima
             if (dfs_recursivo(vizinho, fim, grafo, caminho, custo_final, custo_atual + aresta.get_custo(), iteracao)) {
                 return true;
-            }
+                              }
         }
     }
 
-    caminho.pop_back();
+    //  Sem backtracking: não removemos o vértice
     return false;
 }
+
 
 //Executa a DFS e imprime a saída no formato especificado
 //Descrição Executa a busca em profundidade (DFS) no grafo entre dois vértices dados.
@@ -63,15 +64,28 @@ bool DFS::dfs_recursivo(const string &vertice,const string &fim,Grafo &grafo,vec
 void DFS::executar(Grafo &grafo, const string &inicio, const string &fim) {
     // Inicializações
     visitado.clear();
+    // Certifica-se de que todos os vértices presentes nas arestas estejam no mapa 'visitado'
     for (Aresta &aresta : grafo.get_aresta()) {
-        visitado[aresta.get_lig_inicio()] = false;
-        visitado[aresta.get_lig_fim()] = false;
+        if (visitado.find(aresta.get_lig_inicio()) == visitado.end()) {
+            visitado[aresta.get_lig_inicio()] = false;
+        }
+        if (visitado.find(aresta.get_lig_fim()) == visitado.end()) {
+            visitado[aresta.get_lig_fim()] = false;
+        }
     }
+    // Caso o nó de início ou fim não tenha arestas associadas, mas exista no grafo (se o Grafo for populado de outra forma)
+    // Essa parte pode precisar de ajuste dependendo de como os vértices são adicionados ao Grafo.
+    // Assumimos aqui que o map `visitado` é inicializado com base nas arestas.
+    // Se o grafo puder ter vértices isolados, seria necessário iterar sobre `grafo.get_vertices()` se essa função existir.
+
     vector<string> caminho;
     int custo_final = 0;
     int iteracao = 1;
 
     cout << "Inicio da execução" << endl;
+
+    // Reseta o contador de nós gerados antes de iniciar a busca.
+    nos_gerados_iteracao = 0;
 
     bool sucesso = dfs_recursivo(inicio, fim, grafo, caminho, custo_final, 0, iteracao);
 
@@ -85,6 +99,8 @@ void DFS::executar(Grafo &grafo, const string &inicio, const string &fim) {
         cout << endl;
     } else {
         cout << "Nao foi encontrado um caminho entre '" << inicio << "' e '" << fim << "'." << endl;
+        
     }
+ 
     cout << endl;
 }

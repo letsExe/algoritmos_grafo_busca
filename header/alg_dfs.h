@@ -6,12 +6,13 @@
 #include <vector>
 #include <iostream>
 
+
 using namespace std;
 
 class DFS {
 private:
     map<string, bool> visitado;   // Marca os vértices visitados
-
+    int nos_gerados_iteracao;
     //Descrição Função recursiva auxiliar
     //Pré-condição O grafo deve estar corretamente inicializado e conter os vértices e arestas
     //Pós-condição Retorna 'true' se o vértice 'fim' foi encontrado, caso contrário 'false'.
