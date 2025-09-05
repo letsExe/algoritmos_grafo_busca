@@ -3,7 +3,6 @@
 #include "header/a_estrela.h"
 #include "header/menu.h"
 
-using namespace std;
 
 int main(){
     

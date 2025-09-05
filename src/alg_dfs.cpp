@@ -22,7 +22,7 @@ bool DFS::dfs_recursivo(const string &vertice,const string &fim,Grafo &grafo, ve
     caminho.push_back(vertice);
     nos_gerados_iteracao++;
 
-    cout << "Iteração " << iteracao++ << ":" << endl;
+    cout << "Iteracao " << iteracao++ << ":" << endl;
     cout << "Lista: (" << vertice << ": dist = " << custo_atual << ")" << endl;
     cout << "Medida de desempenho - Nos Gerados: " << nos_gerados_iteracao << endl << endl;
 
@@ -77,21 +77,20 @@ void DFS::executar(Grafo &grafo, const string &inicio, const string &fim) {
     int custo_final = 0;
     int iteracao = 1;
 
-    cout << "Inicio da execução" << endl;
+    cout << "Inicio da execucao" << endl;
 
     // Reseta o contador de nós gerados antes de iniciar a busca.
     nos_gerados_iteracao = 0;
 
     bool sucesso = dfs_recursivo(inicio, fim, grafo, caminho, custo_final, 0, iteracao);
 
-    cout << "Fim da execução" << endl;
+    cout << "Fim da execucao" << endl;
     if (sucesso) {
-        cout << "Distância: " << custo_final << endl;
+        cout << "Distancia: " << custo_final << endl;
         cout << "Caminho: ";
         for (size_t i = 0; i < caminho.size(); ++i) {
             cout << caminho[i] << (i == caminho.size() - 1 ? "" : " - ");
         }
-        cout << endl;
     } else {
         cout << "Nao foi encontrado um caminho entre '" << inicio << "' e '" << fim << "'." << endl;
         
