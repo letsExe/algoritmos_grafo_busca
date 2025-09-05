@@ -1,6 +1,5 @@
 #include "../header/a_estrela.h"
-#include <algorithm>
-#include <iostream>
+
 
 No::No(string nome, string pai, int g, int h) {
     this->nome = nome;
@@ -56,6 +55,7 @@ void No::imprime_lista(priority_queue<No, vector<No>, greater<No>> pq) {
 // Pós-condição:Se existir caminho do nó inicial até o nó final, imprime o caminho encontrado,o custo total.
 void No::algoritmo_a_estrela(Grafo& grafo, string inicio, string fim, int comprimento_maximo) {
     priority_queue<No, vector<No>, greater<No>> fronteira;
+
     map<string, string> pai;
     map<string, int> g_custo;
     int nos_gerados = 0;
@@ -86,7 +86,6 @@ void No::algoritmo_a_estrela(Grafo& grafo, string inicio, string fim, int compri
 
 
         // 2) pega o melhor e verifica fio restante
-        // 2) pega o melhor
         No atual = fronteira.top();
         fronteira.pop();
         

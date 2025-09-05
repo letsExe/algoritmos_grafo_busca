@@ -1,6 +1,5 @@
 #include "../header/alg_dfs.h"
-#include <iostream>
-#include <vector>
+
 
 DFS::DFS() {}
 
@@ -17,13 +16,12 @@ void DFS::set_visitado(map<string, bool> v) {
 //Descrição Função recursiva auxiliar
 //Pré-condição O grafo deve estar corretamente inicializado e conter os vértices e arestas
 //Pós-condição Retorna 'true' se o vértice 'fim' foi encontrado, caso contrário 'false'.
-bool DFS::dfs_recursivo(const string &vertice,const string &fim,Grafo &grafo,
-                        vector<string> &caminho,int &custo_final,
-                        int custo_atual,int &iteracao) {
+bool DFS::dfs_recursivo(const string &vertice,const string &fim,Grafo &grafo, vector<string> &caminho,int &custo_final, int custo_atual,int &iteracao) {
 
     visitado[vertice] = true;
     caminho.push_back(vertice);
     nos_gerados_iteracao++;
+
     cout << "Iteração " << iteracao++ << ":" << endl;
     cout << "Lista: (" << vertice << ": dist = " << custo_atual << ")" << endl;
     cout << "Medida de desempenho - Nos Gerados: " << nos_gerados_iteracao << endl << endl;
@@ -73,10 +71,7 @@ void DFS::executar(Grafo &grafo, const string &inicio, const string &fim) {
             visitado[aresta.get_lig_fim()] = false;
         }
     }
-    // Caso o nó de início ou fim não tenha arestas associadas, mas exista no grafo (se o Grafo for populado de outra forma)
-    // Essa parte pode precisar de ajuste dependendo de como os vértices são adicionados ao Grafo.
-    // Assumimos aqui que o map `visitado` é inicializado com base nas arestas.
-    // Se o grafo puder ter vértices isolados, seria necessário iterar sobre `grafo.get_vertices()` se essa função existir.
+    
 
     vector<string> caminho;
     int custo_final = 0;
